@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      String    @default("USER") // USER, ADMIN
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  destination String
+  price       Float
+  duration    Int      // In days
+  images      String   // JSON string or comma separated
+  itinerary   String   // JSON string storing day-wise details
+  inclusions  String   // JSON string
+  exclusions  String   // JSON string
+  activities  String?  // JSON string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  type          String   // PACKAGE, HOTEL, FLIGHT
+  status        String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  totalAmount   Float
+  currency      String   @default("USD")
+  paymentStatus String   @default("UNPAID") // UNPAID, PAID, PARTIAL
+  details       String   // JSON string storing specific booking info (flight no, hotel name, etc.)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  type      String   // GENERAL, CUSTOM_PACKAGE
+  status    String   @default("NEW") // NEW, CONTACTED, CLOSED
+  createdAt DateTime @default(now())
+}
