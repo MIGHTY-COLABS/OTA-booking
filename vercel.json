@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "src/lib/prisma.ts": {
+      "includeFiles": ["public/db/dev.db"]
+    }
+  }
+}
